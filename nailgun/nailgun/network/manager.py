@@ -175,14 +175,16 @@ class NetworkManager(object):
         nw_group.networks = []
 
         for n in xrange(nw_group.amount):
-            vlan_db = self.db.query(Vlan).get(nw_group.vlan_start + n)
-            if vlan_db:
-                logger.warning("Intersection with existing vlan_id: %s",
-                               vlan_db.id)
-            else:
-                vlan_db = Vlan(id=nw_group.vlan_start + n)
-                self.db.add(vlan_db)
-            logger.debug("Created VLAN object, vlan_id=%s", vlan_db.id)
+            vlan_id = None
+            if nw_group.vlan_start is not None:
+                vlan_db = self.db().query(Vlan).get(nw_group.vlan_start + n)
+                if vlan_db:
+                    logger.warning("Intersection with existing vlan_id: %s",
+                                   vlan_db.id)
+                else:
+                    vlan_db = Vlan(id=nw_group.vlan_start + n)
+                    self.db().add(vlan_db)
+                vlan_id = vlan_db.id
             gateway = None
             if nw_group.gateway:
                 gateway = nw_group.gateway
@@ -191,7 +193,7 @@ class NetworkManager(object):
                 name=nw_group.name,
                 access=nw_group.access,
                 cidr=str(subnets[n]),
-                vlan_id=vlan_db.id,
+                vlan_id=vlan_id,
                 gateway=gateway,
                 network_group_id=nw_group.id)
             self.db.add(net_db)
