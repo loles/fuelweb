@@ -636,3 +636,64 @@ class NetworkManager(object):
                     return interface
 
         raise errors.CanNotFindInterface()
+
+    def assign_provider_network(self, node):
+        #find public iface
+        public_iface = self.__get_public_iface(node)
+        ip = public_iface['ip']
+        netmask = public_iface['netmask']
+        gateway = self.__get_gateway(public_iface)
+        mac = public_iface['mac']
+
+        if public_iface:
+            network = IPNetwork('{0}/{1}'.format(ip, netmask))
+            net_group = orm().query(NetworkGroup).filter_by(
+                            cluster_id=node.cluster.id,
+                            name='public').first()
+            if not net_group:
+                net_group = NetworkGroup()
+                net_group.access = 'public'
+                net_group.amount = 1
+                net_group.cidr = str(network.cidr)
+                net_group.gateway = gateway
+                net_group.name = 'public'
+                net_group.netmask = netmask
+                net_group.vlan_start = None
+            net_group.cluster_id = node.cluster.id
+            self.db.add(net_group)
+            self.db.commit()
+
+            net = orm().query(Network).filter_by(cidr=str(network.cidr)).first()
+            if not net:
+                net = Network()
+                net.name = 'public'
+                net.access = 'public'
+                net.vlan_id = None
+                net.cidr = str(network.cidr)
+                net.gateway = gateway
+                net.network_group_id = net_group.id
+                self.db.add(net)
+                self.db.commit()
+
+            ipaddr = orm().query(IPAddr).filter_by(ip_addr=str(network.ip)).first()
+            if not ipaddr:
+                ipaddr = IPAddr()
+                ipaddr.ip_addr = str(network.ip)
+                ipaddr.network = net.id
+                ipaddr.node = node.id
+                self.db.add(ipaddr)
+                self.db.commit()
+            for iface in node.interfaces:
+                if iface.mac == mac:
+                    iface.assigned_networks.append(net_group)
+
+    def __get_public_iface(self, node):
+        for iface in node.meta['interfaces']:
+            if iface ['routes'] and any(route['destination'] == 'default'
+                                                for route in iface['routes']):
+                return iface
+
+    def __get_gateway(self, iface):
+        for route in iface['routes']:
+            if route['destination'] == 'default':
+                return route['via']
