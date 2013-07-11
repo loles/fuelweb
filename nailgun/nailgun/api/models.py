@@ -327,6 +327,8 @@ class NetworkGroup(Base):
 
     @classmethod
     def generate_vlan_ids_list(cls, ng):
+        if ng["vlan_start"] is None:
+            return [0]
         vlans = [
             i for i in xrange(
                 int(ng["vlan_start"]),
