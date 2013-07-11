@@ -71,7 +71,9 @@ class NetworkConfigurationHandler(JSONHandler):
         cluster = self.get_object_or_404(Cluster, cluster_id)
         result = {}
         result['net_manager'] = cluster.net_manager
-        result['networks'] = map(self.render, cluster.network_groups)
+        result['networks'] = map(self.render,
+                                 (ng for ng in cluster.network_groups
+                                                 if ng.name != 'public'))
         return result
 
     def PUT(self, cluster_id):
