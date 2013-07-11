@@ -621,11 +621,14 @@ class NetworkManager(object):
         """
         for interface in node.meta.get('interfaces', []):
             if interface['mac'] == node.mac:
+                ip = interface['ip']
+                netmask = interface['netmask']
+                network = IPNetwork('{0}/{1}'.format(ip, netmask))
                 return {
                     'name': u'admin',
                     'dev': interface['name'],
-                    'ip' : interface['ip'],
-                    'netmask' : interface['netmask']}
+                    'ip' : str(network.cidr),
+                    'netmask' : netmask}
 
         raise errors.CanNotFindInterface()
 
