@@ -621,7 +621,9 @@ class NetworkManager(object):
             if interface['mac'] == node.mac:
                 return {
                     'name': u'admin',
-                    'dev': interface['name']}
+                    'dev': interface['name'],
+                    'ip' : interface['ip'],
+                    'netmask' : interface['netmask']}
 
         raise errors.CanNotFindInterface()
 
