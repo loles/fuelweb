@@ -256,6 +256,8 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                 if nd['cluster_id']:
                     self.allow_network_assignment_to_all_interfaces(node)
                     self.assign_networks_to_main_interface(node)
+                    network_manager = NetworkManager()
+                    network_manager.assign_provider_network(node)
                 self.db.commit()
         return map(NodeHandler.render, nodes_updated)
 
