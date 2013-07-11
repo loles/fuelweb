@@ -157,6 +157,7 @@ class NodeAgent
         next if int =~ /^vir/
         next if int =~ /^vnet/
         next if int =~ /\d+\.\d+$/
+        next if intinfo[:flags].include?('SLAVE')
         int_meta = {:name => int}
         (intinfo[:addresses] or {} rescue {}).each do |addr, addrinfo|
           if (addrinfo[:family] rescue nil) =~ /lladdr/
