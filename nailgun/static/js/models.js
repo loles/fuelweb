@@ -298,7 +298,7 @@ define(function() {
         getAttributes: function() {
             var attributes = {
                 'floating': ['ip_ranges', 'vlan_start'],
-                'public': ['ip_ranges', 'vlan_start', 'netmask', 'gateway'],
+                'public': ['cidr', 'gateway', 'vlan_start'],
                 'management': ['cidr', 'vlan_start'],
                 'storage': ['cidr', 'vlan_start'],
                 'fixed': ['cidr', 'amount', 'network_size', 'vlan_start']
