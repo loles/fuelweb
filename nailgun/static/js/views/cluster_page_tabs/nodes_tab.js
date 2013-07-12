@@ -980,7 +980,7 @@ function(utils, models, commonViews, dialogViews, nodesTabSummaryTemplate, editN
             this.checkIfEmpty();
             this.$('.logical-network-box').sortable({
                 connectWith: '.logical-network-box',
-                items: '.logical-network-group',
+                items: '.logical-network-group:not(:has(div.unsortable))',
                 containment: this.screen.$('.node-networks'),
                 disabled: this.screen.isLocked()
             }).disableSelection();

@@ -17,7 +17,12 @@
             </div><div class="logical-network-group">
           <% } %>
           <% previousVlan = currentVlan %>
-          <div class="logical-network-item" data-name="<%- network.get('name') %>">
+
+          <% if (network.get('name') == 'public') { %>
+            <div class="logical-network-item unsortable" data-name="<%- network.get('name') %>">
+          <% } else { %>
+            <div class="logical-network-item" data-name="<%- network.get('name') %>">
+          <% } %>
             <div class="name"><%- network.get('name') %></div>
             <div class="id">
             <% var vlanStart = network.vlanStart() %>
