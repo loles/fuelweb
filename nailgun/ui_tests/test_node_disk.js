@@ -58,7 +58,6 @@ casper.then(function() {
     this.then(function() {
         this.test.comment('Testing nodes disks layout');
         this.test.assertEvalEquals(function() {return $('.disk-box').length}, 2, 'Number of disks is correct');
-        this.test.assertEvalEquals(function() {return $('.bootable-marker:visible').length}, 1, 'Number of bootable disks is correct');
         this.test.assertExists('.btn-defaults:not(:disabled)', 'Load Defaults button is enabled');
         this.test.assertExists('.btn-revert-changes:disabled', 'Cancel button is disabled');
         this.test.assertExists('.btn-apply:disabled', 'Apply button is disabled');
@@ -66,11 +65,9 @@ casper.then(function() {
 
     this.then(function() {
         this.test.comment('Testing nodes disk block');
-        this.test.assertEvalEquals(function(sdaDisk) {return $(sdaDisk + ' .bootable-marker:visible').length}, 1, 'SDA disk is bootable', {sdaDisk: sdaDisk});
         this.click(sdaDisk + ' .toggle-volume');
         vmSDA= this.getElementAttribute(sdaDiskVM + ' input', 'value');
         osSDA= this.getElementAttribute(sdaDiskOS + ' input', 'value');
-        this.test.assertExists(sdaDisk + ' .btn-bootable:disabled', 'Button Make Bottable is disabled');
         this.test.assertExists(sdaDiskOS + '', 'Base system group form is presented');
         this.test.assertExists(sdaDiskVM + '', 'Virtual Storage group form is presented');
         this.test.assertExists(sdaDisk + ' .disk-visual .os .close-btn.hide', 'Button Close for Base system group is not presented');
