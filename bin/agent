@@ -162,6 +162,9 @@ class NodeAgent
         int_meta[:routes] = intinfo[:routes]
         (intinfo[:addresses] or {} rescue {}).each do |addr, addrinfo|
           if (addrinfo[:family] rescue nil) =~ /lladdr/
+            if intinfo.has_key?('arp') and intinfo[:arp].has_key?(@api_ip)    
+              int_meta[:master_mac] = addr
+            end
             int_meta[:mac] = addr
             begin
               int_info = Rethtool::InterfaceSettings.new(int)
@@ -349,10 +352,14 @@ class NodeAgent
 
   def _data
     res = {
-      :mac => (@os[:macaddress] rescue nil),
       :ip  => (@os[:ipaddress] rescue nil),
       :os_platform => (@os[:platform] rescue nil)
     }
+    _detailed[:interfaces].each do |interface| 
+      if not interface[:master_mac].nil?
+        res[:mac]=interface[:mac]
+      end
+    end
     begin
       detailed_data = _detailed
       res.merge!({
