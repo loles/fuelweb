@@ -627,7 +627,7 @@ class NetworkManager(object):
                 return {
                     'name': u'admin',
                     'dev': interface['name'],
-                    'ip' : str(network.cidr),
+                    'ip' : str(network),
                     'netmask' : netmask}
 
         raise errors.CanNotFindInterface()
