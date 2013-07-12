@@ -351,6 +351,8 @@ class NetworkConfiguration(object):
 
         if 'networks' in network_configuration:
             for ng in network_configuration['networks']:
+                if ng['name'] == 'public':
+                    continue
                 ng_db = orm().query(NetworkGroup).get(ng['id'])
 
                 for key, value in ng.iteritems():
