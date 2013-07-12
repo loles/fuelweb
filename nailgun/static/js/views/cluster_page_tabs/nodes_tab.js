@@ -596,19 +596,11 @@ function(utils, models, commonViews, dialogViews, nodesTabSummaryTemplate, editN
                         this.volumes.fetch({url: _.result(this.node, 'url') + '/volumes'}),
                         this.disks.fetch({url: _.result(this.node, 'url') + '/disks'})
                     )
-                    .fail(_.bind(function() {
-                        var volumesFake = [{"name": "os", "label": "Base System", "min_size": 100002}, {"name": "vm", "label": "Virtual Storage", "min_size": 0}];
-                        var disksFake = [{"id": "sda", "size": 10002049}, {"id": "sdb", "size": 10002049}];
-                        var diskVolumesFake = [{"name": "os", "size": 2097169}, {"name": "vm", "size": 0}];
-                        this.volumes = new models.Volumes(volumesFake);
-                        this.disks = new models.Disks(disksFake);
-                        this.disks.each(function(disk){
-                            disk.set({volumes: new models.Volumes(diskVolumesFake)});
-                        });
+                    .done(_.bind(function() {
                         this.initialData = _.cloneDeep(this.disks.toJSON());
                         this.render();
                     }, this))
-                    //.fail(_.bind(this.goToNodeList, this));
+                    .fail(_.bind(this.goToNodeList, this));
             } else {
                 this.goToNodeList();
             }
@@ -648,7 +640,8 @@ function(utils, models, commonViews, dialogViews, nodesTabSummaryTemplate, editN
                 }
                 return properties;
             },
-            showDiskSize: utils.showDiskSize
+            showDiskSize: utils.showSize,
+            showDiskSizeFromMegabytes: utils.showDiskSizeFromMegabytes
         },
         events: {
             'click .toggle-volume': 'toggleEditDiskForm',
@@ -722,7 +715,7 @@ function(utils, models, commonViews, dialogViews, nodesTabSummaryTemplate, editN
             this.$('.disk-visual .' + volumeName)
                 .toggleClass('hidden-titles', width < 6)
                 .css('width', width.toFixed(2) + '%')
-                .find('.volume-group-size').text(utils.showDiskSize(size));
+                .find('.volume-group-size').text(utils.showDiskSizeFromMegabytes(size));
         },
         renderVisualGraph: function() {
             var unallocatedWidth = 100;
@@ -736,6 +729,7 @@ function(utils, models, commonViews, dialogViews, nodesTabSummaryTemplate, editN
         render: function() {
             this.$el.html(this.template(_.extend({
                 disk: this.diskMetaData,
+                diskSize: this.disk.get('size'),
                 diskVolumes: this.disk.get('volumes'),
                 volumes: this.screen.volumes
             }, this.templateHelpers)));

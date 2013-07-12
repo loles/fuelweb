@@ -61,10 +61,10 @@ define(['require'], function(require) {
             var treshold = 1000;
             return(frequency >= treshold ? (frequency / base).toFixed(2) + ' GHz' : frequency + ' MHz');
         },
-        showSize: function(bytes, base, treshold) {
+        showSize: function(bytes, treshold) {
             bytes = parseInt(bytes, 10);
             if (!_.isNumber(bytes) || _.isNaN(bytes)) {return 'N/A';}
-            base = base || 1024;
+            var base = 1024;
             treshold = treshold || 256;
             var units = ['bytes', 'KB', 'MB', 'GB', 'TB'];
             var i, result;
@@ -77,10 +77,13 @@ define(['require'], function(require) {
             return result;
         },
         showMemorySize: function(bytes) {
-            return utils.showSize(bytes, 1024, 1024);
+            return utils.showSize(bytes, 1024);
         },
         showDiskSize: function(bytes) {
-            return utils.showSize(bytes, 1000);
+            return utils.showSize(bytes);
+        },
+        showDiskSizeFromMegabytes: function(megabytes) {
+            return utils.showSize(megabytes*1024*1024);
         },
         calculateNetworkSize: function(cidr) {
             return Math.pow(2, 32 - parseInt(_.last(cidr.split('/')), 10));
