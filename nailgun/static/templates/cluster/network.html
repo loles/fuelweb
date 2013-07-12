@@ -47,10 +47,11 @@
         </div>
       <% }) %>
     <% } else if (_.contains(['netmask', 'gateway', 'cidr', 'amount'], attribute)) { %>
+        <% var isPublic = networkName == 'public' ? 'disabled' : '' %>
         <label class="parameter-box clearfix setting <%= hidden %> <%= vlanManager && attribute == 'amount' ? 'hide' : '' %>">
           <div class="networks-sub-title parameter-name"><%= labels[attribute] %></div>
           <div class="parameter-control <%- attribute %>">
-            <input type="text" class="<%= !vlanManager && attribute == 'amount' ? 'range' : '' %>" name="<%- networkName %>-<%- attribute %>" value="<%- network.get(attribute) %>" <%= disabled %> />
+            <input type="text" class="<%= !vlanManager && attribute == 'amount' ? 'range' : '' %>" name="<%- networkName %>-<%- attribute %>" value="<%- network.get(attribute) %>" <%= disabled %> <%= isPublic || disabled %> />
           </div>
           <div class="error"><span class="help-inline"></span></div>
         </label>
