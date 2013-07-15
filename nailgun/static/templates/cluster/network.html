@@ -74,20 +74,19 @@
         </label>
       <% } else { %>
         <% var vlan = network.get(attribute) %>
-        <% var isFloating = networkName == 'floating' ? 'disabled' : '' %>
         <div class="networks-sub-title parameter-name">Use VLAN Tagging</div>
         <div class="range-row clearfix" style="height: 40px">
           <label class="parameter-box clearfix setting">
             <div class="parameter-control" style="width: 106px">
               <div class="custom-tumbler">
-                <input type="checkbox" class="use-vlan-tagging" <%= _.isNull(vlan) ? '' : 'checked' %> <%= isFloating || disabled %>>
+                <input type="checkbox" class="use-vlan-tagging" <%= _.isNull(vlan) ? '' : 'checked' %>>
                 <!-- [if !IE |(gte IE 9)]> --><span>&nbsp;</span><!-- <![endif] -->
               </div>
             </div>
           </label>
           <label class="parameter-box clearfix setting">
             <div class="parameter-control <%- attribute %>" <%= _.isNull(vlan) ? 'style="display:none"' : '' %>>
-              <input type="text" value="<%- _.isNull(vlan) ? '' : vlan %>" name="<%- networkName %>-<%- attribute %>" class="input-small" <%= isFloating || disabled %>>
+              <input type="text" value="<%- _.isNull(vlan) ? '' : vlan %>" name="<%- networkName %>-<%- attribute %>" class="input-small">
             </div>
           </label>
           <div class="error"><span class="help-inline"></span></div>
