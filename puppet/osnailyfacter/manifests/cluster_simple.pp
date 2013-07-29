@@ -94,6 +94,7 @@ Exec { logoutput => true }
         cinder_db_password      => $cinder_hash[db_password],
         manage_volumes          => false,
         use_syslog              => true,
+        glance_backend          => 'swift',
       }
 
       class { "::rsyslog::client":

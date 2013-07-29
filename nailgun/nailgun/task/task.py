@@ -121,6 +121,9 @@ class DeploymentTask(object):
 
         cluster_attrs = task.cluster.attributes.merged_attrs_values()
         cluster_attrs['controller_nodes'] = cls.__controller_nodes(cluster_id)
+        cluster_attrs['sl_object_store'] = {'url': settings.SL_OBJECT_STORE_URL,
+                                            'user': settings.SL_OBJECT_STORE_USER,
+                                            'key': settings.SL_OBJECT_STORE_KEY}
 
         nets_db = orm().query(Network).join(NetworkGroup).\
             filter(NetworkGroup.cluster_id == cluster_id).all()

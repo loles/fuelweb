@@ -233,3 +233,7 @@ DNS_SEARCH: "example.com"
 
 FAKE_TASKS_TICK_INTERVAL: "1"
 FAKE_TASKS_TICK_COUNT: "30"
+
+SL_OBJECT_STORE_URL: "https://*.objectstorage.softlayer.net/auth/v1.0/"
+SL_OBJECT_STORE_USER: "SL_USER"
+SL_OBJECT_STORE_KEY: "SL_PASSWORD"
