@@ -3551,6 +3551,10 @@ hr.slim {
   font-size: 10px;
 }
 
+.logical-network-item.unsortable:hover {
+  cursor: not-allowed;
+}
+
 .changes-locked .logical-network-item {
   cursor: not-allowed;
 }

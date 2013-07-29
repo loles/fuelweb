@@ -122,4 +122,6 @@ class NICUtils(object):
         main_nic = self.get_main_nic(node)
         if main_nic:
             for net_group in self.get_all_cluster_networkgroups(node):
+                if net_group.name == 'public':
+                    continue
                 main_nic.assigned_networks.append(net_group)

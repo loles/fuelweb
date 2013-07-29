@@ -180,9 +180,11 @@ function(utils, models, commonViews, dialogViews, networkTabTemplate, networkTem
                 this.tearDownRegisteredSubViews();
                 this.$('.networks-table').html('');
                 this.networkConfiguration.get('networks').each(function(network) {
-                    var networkView = new Network({network: network, tab: this});
-                    this.registerSubView(networkView);
-                    this.$('.networks-table').append(networkView.render().el);
+                    if (network.get('name') != 'public') {
+                        var networkView = new Network({network: network, tab: this});
+                        this.registerSubView(networkView);
+                        this.$('.networks-table').append(networkView.render().el);
+                    }
                 }, this);
             }
         },
@@ -225,21 +227,12 @@ function(utils, models, commonViews, dialogViews, networkTabTemplate, networkTem
                 var vlanEnd = (parseInt(this.$('input[name=fixed-vlan_range-start]').val(), 10) + amount - 1) || 1;
                 vlanEnd = vlanEnd > 4094 ? 4094 : vlanEnd;
                 this.$('input[name=fixed-vlan_range-end]').val(vlanEnd);
-            } else if (this.network.get('name') == 'public') {
-                this.tab.$('div.floating').find('input.error').removeClass('error');
-                this.tab.$('div.floating').find('.help-inline').text('');
-                this.tab.$('input[name=floating-vlan_start]').val(this.$('input[name=public-vlan_start]').val());
-                if (target.hasClass('use-vlan-tagging')) {
-                    this.tab.$('div.floating').find('.use-vlan-tagging').prop('checked', target.is(':checked'));
-                    this.tab.$('div.floating').find('.vlan_start').toggle(target.is(':checked'));
-                }
             }
             if (target.attr('name') == 'fixed-amount') {
                 // storing fixedAmount
                 this.tab.fixedAmount = parseInt(target.val(), 10) || this.tab.fixedAmount;
             }
             this.updateNetworkFromForm();
-            this.tab.updateFloatingVlanFromPublic();
             this.tab.checkForChanges();
             this.tab.page.removeVerificationTask();
         },
