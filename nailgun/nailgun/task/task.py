@@ -157,8 +157,7 @@ class DeploymentTask(object):
             logger.info("HA mode chosen, creating VIP addresses for it..")
             cluster_attrs['management_vip'] = netmanager.assign_vip(
                 cluster_id, "management")
-            cluster_attrs['public_vip'] = netmanager.assign_vip(
-                cluster_id, "public")
+            cluster_attrs['public_vip'] = cluster_attrs['floating_network_range'].pop(0)
 
         cluster_attrs['deployment_mode'] = task.cluster.mode
         cluster_attrs['deployment_id'] = cluster_id
