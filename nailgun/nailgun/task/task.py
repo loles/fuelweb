@@ -418,7 +418,8 @@ class DeletionTask(object):
                 nodes_to_delete.append({
                     'id': node.id,
                     'uid': node.id,
-                    'role': node.role
+                    'role': node.role,
+                    'ip' : node.ip
                 })
 
                 if USE_FAKE:
