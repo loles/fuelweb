@@ -321,18 +321,14 @@ class ProvisionTask(object):
                 node.id,
                 len(node.meta.get('interfaces', []))
             )
-            admin_net_id = netmanager.get_admin_network_id()
-            admin_ips = set([i.ip_addr for i in orm().query(IPAddr).
-                            filter_by(node=node.id).
-                            filter_by(network=admin_net_id)])
             for i in node.meta.get('interfaces', []):
                 if 'interfaces' not in node_data:
                     node_data['interfaces'] = {}
                 node_data['interfaces'][i['name']] = {
                     'mac_address': i['mac'],
                     'static': '0',
-                    'netmask': settings.ADMIN_NETWORK['netmask'],
-                    'ip_address': admin_ips.pop(),
+                    'netmask': i['netmask'],
+                    'ip_address': i['ip'],
                 }
                 # interfaces_extra field in cobbler ks_meta
                 # means some extra data for network interfaces
