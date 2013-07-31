@@ -130,7 +130,7 @@
                             "weight": 40
                         },
                         "libvirt_type": {
-                            "value": "qemu",
+                            "value": "kvm",
                             "values": [
                                 {
                                     "data": "kvm",
