@@ -512,6 +512,7 @@ class DeletionTask(object):
                     'username': settings.COBBLER_USER,
                     'password': settings.COBBLER_PASSWORD,
                 },
+                'master_ip' : settings.MASTER_IP,
                 'engine_nodes': engine_nodes
             }
         }
