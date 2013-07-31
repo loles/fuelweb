@@ -124,7 +124,7 @@
                             "type": "checkbox"
                         },
                         "libvirt_type": {
-                            "value": "qemu",
+                            "value": "kvm",
                             "values": [
                                 {
                                     "data": "kvm",
