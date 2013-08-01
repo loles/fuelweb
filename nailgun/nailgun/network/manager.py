@@ -72,35 +72,16 @@ class NetworkManager(object):
         :param cluster_id: Cluster database ID.
         :type  cluster_id: int
         :returns: None
-        :raises: errors.OutOfVLANs, errors.OutOfIPs,
+        :raises: errors.OutOfIPs,
         errors.NoSuitableCIDR
         '''
         used_nets = []
-        used_vlans = []
 
         cluster_db = db().query(Cluster).get(cluster_id)
 
         networks_metadata = cluster_db.release.networks_metadata
 
-        def _free_vlans():
-            free_vlans = set(
-                range(
-                    int(settings.VLANS_RANGE_START),
-                    int(settings.VLANS_RANGE_END)
-                )
-            ) - set(used_vlans)
-            if not free_vlans or len(free_vlans) < len(networks_metadata):
-                raise errors.OutOfVLANs()
-            return sorted(list(free_vlans))
-
-        public_vlan = _free_vlans()[0]
-        used_vlans.append(public_vlan)
         for network in networks_metadata:
-            free_vlans = _free_vlans()
-            vlan_start = public_vlan if network['access'] == 'public' \
-                else free_vlans[0]
-
-            logger.debug("Found free vlan: %s", vlan_start)
             pool = settings.NETWORK_POOLS[network['access']]
             if not pool:
                 raise errors.InvalidNetworkAccess(
@@ -145,7 +126,7 @@ class NetworkManager(object):
                 netmask=str(new_net.netmask),
                 gateway=str(new_net[1]),
                 cluster_id=cluster_id,
-                vlan_start=vlan_start,
+                vlan_start=None,
                 amount=1
             )
             db().add(nw_group)
@@ -154,7 +135,6 @@ class NetworkManager(object):
             db().commit()
             self.create_networks(nw_group)
 
-            used_vlans.append(vlan_start)
             used_nets.append(str(new_net))
 
     def create_networks(self, nw_group):
