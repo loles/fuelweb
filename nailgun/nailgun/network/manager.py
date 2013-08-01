@@ -601,6 +601,8 @@ class NetworkManager(object):
         """
         for interface in node.meta.get('interfaces', []):
             if interface['mac'] == node.mac:
+                if not 'ip' in interface:
+                    return {'name': u'admin', 'dev': interface['name']}
                 ip = interface['ip']
                 netmask = interface['netmask']
                 network = IPNetwork('{0}/{1}'.format(ip, netmask))
