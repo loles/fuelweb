@@ -676,6 +676,22 @@ class NetworkManager(object):
                 if iface.mac == mac:
                     iface.assigned_networks.append(net_group)
 
+    def assign_floating_network(self, node):
+        public_iface = self.__get_public_iface(node)
+        net_group = self.__get_net_group(node, 'floating')
+        if public_iface and net_group:
+            mac = public_iface['mac']
+            for iface in node.interfaces:
+                if iface.mac == mac:
+                    iface.assigned_networks.append(net_group)
+
+    def __get_net_group(self, node, ng_name):
+        if node.cluster:
+            for ng in node.cluster.network_groups:
+                if ng.name == ng_name:
+                    return ng
+        return None
+
     def __get_public_iface(self, node):
         for iface in node.meta['interfaces']:
             if iface ['routes'] and any(route['destination'] == 'default'

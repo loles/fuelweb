@@ -258,6 +258,7 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                     self.assign_networks_to_main_interface(node)
                     network_manager = NetworkManager()
                     network_manager.assign_provider_network(node)
+                    network_manager.assign_floating_network(node)
                 self.db.commit()
         return map(NodeHandler.render, nodes_updated)
 
