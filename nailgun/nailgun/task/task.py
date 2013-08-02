@@ -315,21 +315,18 @@ class ProvisionTask(object):
                 orm().add(node)
                 orm().commit()
 
-            # here we assign admin network IPs for node
-            # one IP for every node interface
-            netmanager.assign_admin_ips(
-                node.id,
-                len(node.meta.get('interfaces', []))
-            )
             for i in node.meta.get('interfaces', []):
                 if 'interfaces' not in node_data:
                     node_data['interfaces'] = {}
                 node_data['interfaces'][i['name']] = {
                     'mac_address': i['mac'],
                     'static': '0',
-                    'netmask': i['netmask'],
-                    'ip_address': i['ip'],
                 }
+                if i.get('netmask') and i.get('ip'):
+                    node_data['interfaces'][i['name']].update({
+                        'netmask': i['netmask'],
+                        'ip_address': i['ip'],
+                        })
                 # interfaces_extra field in cobbler ks_meta
                 # means some extra data for network interfaces
                 # configuration. It is used by cobbler snippet.
