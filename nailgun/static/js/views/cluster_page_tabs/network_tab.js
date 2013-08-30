@@ -206,11 +206,13 @@ function(utils, models, commonViews, dialogViews, networkTabTemplate, networkTem
                 this.tearDownRegisteredSubViews();
                 this.$('.networks-table').html('');
                 this.networkConfiguration.get('networks').each(function(network) {
-                   if (network.get('name') != 'public') {
-                       var networkView = new Network({network: network, tab: this});
-                       this.registerSubView(networkView);
-                       this.$('.networks-table').append(networkView.render().el);
-                   }
+                    if (network.get('name') != 'public') {
+                        if (!(network.get('name') == 'management' && this.model.get('mode') != 'ha')) {
+                            var networkView = new Network({network: network, tab: this});
+                            this.registerSubView(networkView);
+                            this.$('.networks-table').append(networkView.render().el);
+                        }
+                    }
                 }, this);
             }
         },

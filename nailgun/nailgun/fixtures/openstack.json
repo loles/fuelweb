@@ -11,7 +11,7 @@
             "networks_metadata": [
                 {"name": "floating", "access": "public"},
                 {"name": "management", "access": "private192"},
-                {"name": "fixed", "access": "private10"}
+                {"name": "fixed", "access": "private10"},
             ],
             "volumes_metadata": {
                 "volumes_roles_mapping": {
