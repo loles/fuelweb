@@ -1,5 +1,11 @@
 <% var networkName = network.get('name') %>
-<legend class="networks"><%- networkName != 'fixed' ? networkName : 'VM Networks (Fixed)' %></legend>
+<% if (networkName == 'fixed') { %>
+    <legend class="networks">VM Networks (Fixed)</legend>
+<% } else if (networkName == 'management') { %>
+    <legend class="networks">Private VIP network</legend>
+<% } else { %>
+    <legend class="networks"> <%- networkName %> </legend>
+<% } %>
 
 <% var disabled = locked ? 'disabled' : '' %>
 <% var vlanManager = net_manager == 'VlanManager' ? '' : 'hide' %>
