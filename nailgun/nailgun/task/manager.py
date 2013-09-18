@@ -178,7 +178,7 @@ class DeploymentTaskManager(TaskManager):
             check_networks,
             tasks.CheckNetworksTask,
             data=network_info,
-            check_admin_untagged=True
+            check_admin_untagged=False
         )
         db().refresh(check_networks)
         if check_networks.status == 'error':
