@@ -10,9 +10,7 @@
             "state": "available",
             "networks_metadata": [
                 {"name": "floating", "access": "public"},
-                {"name": "public", "access": "public"},
                 {"name": "management", "access": "private192"},
-                {"name": "storage", "access": "private192"},
                 {"name": "fixed", "access": "private10"}
             ],
             "volumes_metadata": {

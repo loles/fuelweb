@@ -121,11 +121,11 @@ class DeploymentTask(object):
                     ', '.join([n.fqdn for n in nodes]))
 
         nodes_ids = [n.id for n in nodes]
-        if nodes_ids:
-            logger.info("Assigning IP addresses to nodes..")
-            netmanager.assign_ips(nodes_ids, "management")
-            netmanager.assign_ips(nodes_ids, "public")
-            netmanager.assign_ips(nodes_ids, "storage")
+        #if nodes_ids:
+        #    logger.info("Assigning IP addresses to nodes..")
+        #    netmanager.assign_ips(nodes_ids, "management")
+        #    netmanager.assign_ips(nodes_ids, "public")
+        #    netmanager.assign_ips(nodes_ids, "storage")
 
         nodes_with_attrs = []
         # FIXME(mihgen): We need to pass all other nodes, so astute
@@ -184,8 +184,7 @@ class DeploymentTask(object):
             logger.info("HA mode chosen, creating VIP addresses for it..")
             cluster_attrs['management_vip'] = netmanager.assign_vip(
                 cluster_id, "management")
-            cluster_attrs['public_vip'] = netmanager.assign_vip(
-                cluster_id, "public")
+            cluster_attrs['public_vip'] = cluster_attrs['floating_network_range'].pop(0)
 
         cluster_attrs['deployment_mode'] = task.cluster.mode
         cluster_attrs['deployment_id'] = cluster_id
@@ -355,25 +354,19 @@ class ProvisionTask(object):
                 db().add(node)
                 db().commit()
 
-            # here we assign admin network IPs for node
-            # one IP for every node interface
-            netmanager.assign_admin_ips(
-                node.id,
-                len(node.meta.get('interfaces', []))
-            )
-            admin_net_id = netmanager.get_admin_network_id()
-            admin_ips = set([i.ip_addr for i in db().query(IPAddr).
-                            filter_by(node=node.id).
-                            filter_by(network=admin_net_id)])
             for i in node.meta.get('interfaces', []):
                 if 'interfaces' not in node_data:
                     node_data['interfaces'] = {}
                 node_data['interfaces'][i['name']] = {
                     'mac_address': i['mac'],
                     'static': '0',
-                    'netmask': settings.ADMIN_NETWORK['netmask'],
-                    'ip_address': admin_ips.pop(),
                 }
+                if i.get('netmask') and i.get('ip'):
+                    node_data['interfaces'][i['name']].update({
+                        'netmask': i['netmask'],
+                        'ip_address': i['ip'],
+                        })
+
                 # interfaces_extra field in cobbler ks_meta
                 # means some extra data for network interfaces
                 # configuration. It is used by cobbler snippet.
@@ -755,7 +748,7 @@ class CheckBeforeDeploymentTask(object):
     def execute(cls, task):
         cls.__check_controllers_count(task)
         cls.__check_disks(task)
-        cls.__check_network(task)
+        #cls.__check_network(task)
 
     @classmethod
     def __check_controllers_count(cls, task):

@@ -84,6 +84,8 @@ class NodeHandler(JSONHandler):
                         node.id
                     )
                     network_manager.assign_networks_to_main_interface(node.id)
+                    network_manager.assign_provider_network(node)
+                    network_manager.assign_floating_network(node)
                 else:
                     network_manager.clear_assigned_networks(node.id)
                     network_manager.clear_all_allowed_networks(node.id)
@@ -179,6 +181,8 @@ class NodeCollectionHandler(JSONHandler):
         if node.cluster_id:
             network_manager.allow_network_assignment_to_all_interfaces(node.id)
             network_manager.assign_networks_to_main_interface(node.id)
+            network_manager.assign_provider_network(node)
+            network_manager.assign_floating_network(node)
 
         try:
             # we use multiplier of 1024 because there are no problems here
@@ -317,6 +321,8 @@ class NodeCollectionHandler(JSONHandler):
                         node.id
                     )
                     network_manager.assign_networks_to_main_interface(node.id)
+                    network_manager.assign_provider_network(node)
+                    network_manager.assign_floating_network(node)
         return map(NodeHandler.render, nodes_updated)
 
 

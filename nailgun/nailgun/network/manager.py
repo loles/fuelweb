@@ -575,6 +575,8 @@ class NetworkManager(object):
                 node_id
             ):
                 ng_db = db().query(NetworkGroup).get(net_group_id)
+                if ng_db.name in ['public', 'floating']:
+                    continue
                 main_nic.assigned_networks.append(ng_db)
             db().commit()
 
@@ -754,9 +756,16 @@ class NetworkManager(object):
         """
         for interface in node.meta.get('interfaces', []):
             if interface['mac'] == node.mac:
+                if not 'ip' in interface:
+                    return {'name': u'admin', 'dev': interface['name']}
+                ip = interface['ip']
+                netmask = interface['netmask']
+                network = IPNetwork('{0}/{1}'.format(ip, netmask))
                 return {
                     'name': u'admin',
-                    'dev': interface['name']}
+                    'dev': interface['name'],
+                    'ip' : str(network),
+                    'netmask' : netmask}
 
         raise errors.CanNotFindInterface()
 
@@ -801,3 +810,83 @@ class NetworkManager(object):
 
     def get_keystone_url(self, cluster_id):
         return 'http://%s:5000/' % self.get_end_point_ip(cluster_id)
+
+    def assign_provider_network(self, node):
+        #find public iface
+        public_iface = self.__get_public_iface(node)
+        ip = public_iface['ip']
+        netmask = public_iface['netmask']
+        gateway = self.__get_gateway(public_iface)
+        mac = public_iface['mac']
+
+        if public_iface:
+            network = IPNetwork('{0}/{1}'.format(ip, netmask))
+            net_group = db().query(NetworkGroup).filter_by(
+                            cluster_id=node.cluster.id,
+                            name='public').first()
+            if not net_group:
+                net_group = NetworkGroup()
+                net_group.access = 'public'
+                net_group.amount = 1
+                net_group.cidr = str(network.cidr)
+                net_group.gateway = gateway
+                net_group.name = 'public'
+                net_group.netmask = netmask
+                net_group.vlan_start = None
+            net_group.cluster_id = node.cluster.id
+            db.add(net_group)
+            db.commit()
+
+            net = db().query(Network).filter_by(cidr=str(network.cidr),
+                                                name='public').first()
+            if not net:
+                net = Network()
+                net.name = 'public'
+                net.access = 'public'
+                net.vlan_id = None
+                net.cidr = str(network.cidr)
+                net.gateway = gateway
+                net.network_group_id = net_group.id
+                db.add(net)
+                db.commit()
+
+            ipaddr = db().query(IPAddr).filter_by(ip_addr=str(network.ip)).first()
+            if not ipaddr:
+                ipaddr = IPAddr()
+                ipaddr.ip_addr = str(network.ip)
+                ipaddr.network = net.id
+                ipaddr.node = node.id
+                db.add(ipaddr)
+                db.commit()
+            for iface in node.interfaces:
+                if iface.mac == mac:
+                    iface.assigned_networks.append(net_group)
+            db.commit()
+
+    def assign_floating_network(self, node):
+        public_iface = self.__get_public_iface(node)
+        net_group = self.__get_net_group(node, 'floating')
+        if public_iface and net_group:
+            mac = public_iface['mac']
+            for iface in node.interfaces:
+                if iface.mac == mac:
+                    iface.assigned_networks.append(net_group)
+            db.commit()
+
+    def __get_net_group(self, node, ng_name):
+        if node.cluster:
+            for ng in node.cluster.network_groups:
+                if ng.name == ng_name:
+                    return ng
+        return None
+
+    def __get_public_iface(self, node):
+        for iface in node.meta['interfaces']:
+            if iface ['routes'] and any(route['destination'] == 'default'
+                                                for route in iface['routes']):
+                return iface
+
+    def __get_gateway(self, iface):
+        for route in iface['routes']:
+            if route['destination'] == 'default':
+                return route['via']
