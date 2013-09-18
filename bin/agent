@@ -26,6 +26,7 @@ require 'optparse'
 require 'yaml'
 require 'ipaddr'
 require 'rethtool'
+require 'netaddr'
 
 unless Process.euid == 0
   puts "You must be root"
@@ -177,6 +178,19 @@ class NodeAgent
         int_meta[:routes] = intinfo[:routes]
         (intinfo[:addresses] or {} rescue {}).each do |addr, addrinfo|
           if (addrinfo[:family] rescue nil) =~ /lladdr/
+            if intinfo.has_key?("routes")
+              (intinfo[:routes]).each do |data|
+                if data[:destination] != 'default' and data[:family] == 'inet'
+                  cidr = NetAddr::CIDR.create(data[:destination])
+                  if cidr.cmp(@api_ip)
+                    int_meta[:master_mac] = addr
+                  end
+                end
+                if not int_meta[:master_mac].nil? and data[:destination] == 'default' and data[:family] == 'inet'
+                  int_meta[:master_mac] = addr
+                end
+              end
+            end
             int_meta[:mac] = addr
             begin
               int_info = Rethtool::InterfaceSettings.new(int)
