@@ -52,7 +52,7 @@ def content_json(func):
 def build_json_response(data):
     web.header('Content-Type', 'application/json')
     if type(data) in (dict, list):
-        return json.dumps(data, indent=4)
+        return json.dumps(data)
     return data
 
 
