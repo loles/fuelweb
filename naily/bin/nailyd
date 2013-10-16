@@ -7,6 +7,7 @@ require 'optparse'
 require 'yaml'
 require 'amqp'
 require 'raemon'
+require 'astute'
 
 options = OpenStruct.new
 options.daemonize = false
@@ -58,6 +59,7 @@ if options.daemonize
 end
 
 Naily.config.update(YAML.load(File.read(options.config_path))) if File.exists?(options.config_path)
+Astute.config.update(YAML.load(File.read(options.config_path))) if File.exists?(options.config_path)
 Naily.logger = options.log_path ? Logger.new(options.log_path) : Logger.new(STDOUT)
 Naily.logger.level = Logger.const_get(options.log_level.upcase)
 Naily.logger.formatter = proc do |severity, datetime, progname, msg|
