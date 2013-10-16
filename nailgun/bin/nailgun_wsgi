@@ -1,0 +1,8 @@
+#!/opt/nailgun/bin/python
+__requires__ = 'Nailgun==0.1.0'
+import sys
+import nailgun.wsgi
+
+app = nailgun.wsgi.build_app()
+wsgifunc = nailgun.wsgi.build_middleware(app.wsgifunc)
+application = app.wsgifunc()

@@ -67,7 +67,8 @@ if __name__ == "__main__":
           zip_safe=False,
           install_requires=requires,
           include_package_data=True,
-          scripts=['manage.py'],
+          scripts=['manage.py', 'bin/nailgun_keepalive',
+                   'bin/nailgun_rpc', 'bin/nailgun_wsgi'],
           entry_points={
               'console_scripts': [
                   'nailgun_syncdb = nailgun.db:syncdb',
