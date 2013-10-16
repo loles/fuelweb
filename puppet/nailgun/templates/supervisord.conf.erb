@@ -14,8 +14,8 @@ childlogdir=/var/log/supervisor
 serverurl=unix:///var/run/supervisor.sock
 
 
-[program:nailgun]
-command=<%= venv %>/bin/nailgund
+[program:nailgun_8001]
+command=<%= venv %>/bin/uwsgi -s 127.0.0.1:8001 --wsgi-file <%= venv %>/bin/nailgun_wsgi
 process_name=%(program_name)s
 numprocs=1
 numprocs_start=0
@@ -27,10 +27,68 @@ exitcodes=0,2
 stopsignal=INT
 stopwaitsecs=60
 redirect_stderr=true
-stdout_logfile=/var/log/nailgun/app.log
+stdout_logfile=/var/log/nailgun/app-8001.log
 stdout_capture_maxbytes=0
 stdout_events_enabled=false
 serverurl=AUTO
+
+
+[program:nailgun_8001]
+command=<%= venv %>/bin/uwsgi -s 127.0.0.1:8002 --wsgi-file <%= venv %>/bin/nailgun_wsgi
+process_name=%(program_name)s
+numprocs=1
+numprocs_start=0
+autostart=true
+autorestart=true
+startsecs=10
+startretries=1000000
+exitcodes=0,2
+stopsignal=INT
+stopwaitsecs=60
+redirect_stderr=true
+stdout_logfile=/var/log/nailgun/app-8002.log
+stdout_capture_maxbytes=0
+stdout_events_enabled=false
+serverurl=AUTO
+
+
+[program:nailgun_keepalive]
+command=<%= venv %>/bin/nailgun_keepalive
+process_name=%(program_name)s
+numprocs=1
+numprocs_start=0
+autostart=true
+autorestart=true
+startsecs=10
+startretries=1000000
+exitcodes=0,2
+stopsignal=INT
+stopwaitsecs=60
+redirect_stderr=true
+stdout_logfile=/var/log/nailgun/keepalive.log
+stdout_capture_maxbytes=0
+stdout_events_enabled=false
+serverurl=AUTO
+
+
+[program:nailgun_rpc]
+command=<%= venv %>/bin/nailgun_rpc
+process_name=%(program_name)s
+numprocs=1
+numprocs_start=0
+autostart=true
+autorestart=true
+startsecs=10
+startretries=1000000
+exitcodes=0,2
+stopsignal=INT
+stopwaitsecs=60
+redirect_stderr=true
+stdout_logfile=/var/log/nailgun/rpc.log
+stdout_capture_maxbytes=0
+stdout_events_enabled=false
+serverurl=AUTO
+
 
 [program:naily]
 command=/usr/bin/nailyd -c /etc/naily/nailyd.conf -l /var/log/naily/naily.log -w 3

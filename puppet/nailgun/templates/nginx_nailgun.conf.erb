@@ -1,5 +1,6 @@
 upstream nailgun-application {
     server 127.0.0.1:8001;
+    server 127.0.0.1:8002;
 }
 
 
@@ -26,11 +27,7 @@ server {
     }
 
     location / {
-        proxy_pass http://nailgun-application;
-        proxy_read_timeout 2m;
-        proxy_redirect off;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        uwsgi_pass http://nailgun-application;
+        include uwsgi_params;
     }
 }
