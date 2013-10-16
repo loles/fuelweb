@@ -4,10 +4,11 @@ import uuid
 import logging
 import itertools
 import traceback
+import threading
 
 import web
 
-from nailgun.db import orm
+from nailgun.db import _orm
 import nailgun.rpc as rpc
 from nailgun.logger import logger
 from nailgun.errors import errors
@@ -17,6 +18,9 @@ from nailgun.api.models import Network
 from nailgun.task.task import TaskHelper
 
 from nailgun.task import task as tasks
+
+
+orm = _orm
 
 
 class TaskManager(object):
@@ -43,6 +47,17 @@ class TaskManager(object):
                 progress=100,
                 msg=err
             )
+
+    def run_in_thread(self, task, instance, *args, **kwargs):
+        logger.info(
+            u"Spawning new thread for task, args: {0}, kwargs: {1}".format(
+                                                args, kwargs)
+        )
+        args = (task, instance) + args
+        t = threading.Thread(target=self._call_silently,
+                             args=args,
+                             kwargs=kwargs)
+        t.start()
 
 
 class DeploymentTaskManager(TaskManager):
@@ -255,7 +270,7 @@ class ClusterDeletionManager(TaskManager):
         task = Task(name="cluster_deletion", cluster=self.cluster)
         orm().add(task)
         orm().commit()
-        self._call_silently(
+        self.run_in_thread(
             task,
             tasks.ClusterDeletionTask
         )
