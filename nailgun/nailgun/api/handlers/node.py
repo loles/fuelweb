@@ -144,13 +144,10 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
             joinedload('interfaces'),
             joinedload('interfaces.assigned_networks'))
         if user_data.cluster_id == '':
-            nodes = nodes.filter_by(
-                cluster_id=None).all()
+            nodes_query = nodes_query.filter_by(cluster_id=None)
         elif user_data.cluster_id:
-            nodes = nodes.filter_by(
-                cluster_id=user_data.cluster_id).all()
-        else:
-            nodes = nodes.all()
+            nodes_query = nodes_query.filter_by(cluster_id=user_data.cluster_id)
+        nodes = self.fetch_collection(nodes_query)
         return self.render(nodes)
 
     @content_json

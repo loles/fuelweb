@@ -75,6 +75,10 @@ class JSONHandler(object):
 
     fields = []
 
+    # How much rows fetch from database by default (using method
+    # fetch_collection).
+    YIELD_PER = 100
+
     def __init__(self, *args, **kwargs):
         super(JSONHandler, self).__init__(*args, **kwargs)
 
@@ -150,3 +154,10 @@ class JSONHandler(object):
                     else:
                         json_data[field] = value
         return json_data
+
+    def fetch_collection(self, query, yield_per=YIELD_PER):
+        """Use this method for select rows from huge table."""
+        if yield_per is not None:
+            return query.yield_per(yield_per)
+        else:
+            return query

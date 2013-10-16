@@ -115,9 +115,11 @@ class ClusterCollectionHandler(JSONHandler, NICUtils):
 
     @content_json
     def GET(self):
+        clusters_query = self.db.query(Cluster)
+        clusters = self.fetch_collection(clusters_query)
         return map(
             ClusterHandler.render,
-            self.db.query(Cluster).all()
+            clusters
         )
 
     @content_json
