@@ -51,6 +51,19 @@ class NodeHandler(JSONHandler, NICUtils):
         return self.render(node)
 
     @content_json
+    def POST(self, node_id):
+        node = self.get_object_or_404(Node, node_id)
+        node.timestamp = datetime.now()
+        if not node.online:
+            node.online = True
+            msg = u"Node '{0}' is back online".format(
+                node.human_readable_name)
+            logger.info(msg)
+            notifier.notify("discover", msg, node_id=node.id)
+        self.db.commit()
+        return self.render(node)
+
+    @content_json
     def PUT(self, node_id):
         node = self.get_object_or_404(Node, node_id)
         if not node.attributes:
