@@ -106,6 +106,7 @@ class NodeAgent
   end
 
   def update_info
+    sleep((0..120).to_a.choice)
     headers = {"Content-Type" => "application/json"}
     @logger.debug("Trying to update host info into #{@api_url}")
 
@@ -126,6 +127,7 @@ class NodeAgent
   end
 
   def post
+    sleep((0..120).to_a.choice)
     headers = {"Content-Type" => "application/json"}
     @logger.debug("Trying to create host using #{@api_url}")
     res = htclient.post("#{@api_url}/nodes/", _data.to_json, headers)
