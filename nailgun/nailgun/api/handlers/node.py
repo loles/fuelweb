@@ -139,18 +139,16 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
     @content_json
     def GET(self):
         user_data = web.input(cluster_id=None)
-        nodes = self.db.query(Node).options(
+        nodes_query = self.db.query(Node).options(
             joinedload('cluster'),
             joinedload('interfaces'),
             joinedload('interfaces.assigned_networks'))
         if user_data.cluster_id == '':
-            nodes = nodes.filter_by(
-                cluster_id=None).all()
+            nodes_query = nodes_query.filter_by(cluster_id=None)
         elif user_data.cluster_id:
-            nodes = nodes.filter_by(
-                cluster_id=user_data.cluster_id).all()
-        else:
-            nodes = nodes.all()
+            nodes_query = (nodes_query
+                           .filter_by(cluster_id=user_data.cluster_id))
+        nodes = self.fetch_collection(nodes_query)
         return self.render(nodes)
 
     @content_json
@@ -305,11 +303,12 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                     network_manager.assign_provider_network(node)
                     network_manager.assign_floating_network(node)
                 self.db.commit()
-        nodes = self.db.query(Node).options(
-                    joinedload('cluster'),
-                    joinedload('interfaces'),
-                    joinedload('interfaces.assigned_networks')).\
-                    filter(Node.id.in_([n.id for n in nodes_updated])).all()
+        nodes_query = (self.db.query(Node).options(
+            joinedload('cluster'),
+            joinedload('interfaces'),
+            joinedload('interfaces.assigned_networks'))
+            .filter(Node.id.in_([n.id for n in nodes_updated])))
+        nodes = self.fetch_collection(nodes_query)
         return self.render(nodes)
 
 

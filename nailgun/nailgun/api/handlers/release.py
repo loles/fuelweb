@@ -49,9 +49,11 @@ class ReleaseCollectionHandler(JSONHandler):
 
     @content_json
     def GET(self):
+        releases_query = self.db.query(Release)
+        releases = self.fetch_collection(releases_query)
         return map(
             ReleaseHandler.render,
-            self.db.query(Release).all()
+            releases
         )
 
     @content_json

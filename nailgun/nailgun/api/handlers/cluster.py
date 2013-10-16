@@ -115,9 +115,11 @@ class ClusterCollectionHandler(JSONHandler, NICUtils):
 
     @content_json
     def GET(self):
+        clusters_query = self.db.query(Cluster)
+        clusters = self.fetch_collection(clusters_query)
         return map(
             ClusterHandler.render,
-            self.db.query(Cluster).all()
+            clusters
         )
 
     @content_json
@@ -148,9 +150,10 @@ class ClusterCollectionHandler(JSONHandler, NICUtils):
             cluster.add_pending_changes("networks")
 
             if 'nodes' in data and data['nodes']:
-                nodes = self.db.query(Node).filter(
+                nodes_query = self.db.query(Node).filter(
                     Node.id.in_(data['nodes'])
-                ).all()
+                )
+                nodes = self.fetch_collection(nodes_query)
                 map(cluster.nodes.append, nodes)
                 for node in nodes:
                     self.allow_network_assignment_to_all_interfaces(node)
