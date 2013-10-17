@@ -8,7 +8,7 @@ import threading
 
 import web
 
-from nailgun.db import _orm
+from nailgun.db import orm as _orm
 import nailgun.rpc as rpc
 from nailgun.logger import logger
 from nailgun.errors import errors
