@@ -77,7 +77,10 @@ class JSONHandler(object):
 
     def __init__(self, *args, **kwargs):
         super(JSONHandler, self).__init__(*args, **kwargs)
-        self.db = orm()
+
+    @property
+    def db(self):
+        return orm()
 
     def get_object_or_404(self, model, *args, **kwargs):
         # should be in ('warning', 'Log message') format

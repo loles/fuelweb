@@ -8,7 +8,7 @@ from random import randrange, shuffle
 from kombu import Connection, Exchange, Queue
 from sqlalchemy.orm import object_mapper, ColumnProperty
 
-from nailgun.db import make_session
+from nailgun.db import orm
 from nailgun.settings import settings
 from nailgun.logger import logger
 from nailgun.errors import errors
@@ -224,7 +224,6 @@ class FakeProvisionThread(FakeThread):
         tick_interval = int(settings.FAKE_TASKS_TICK_INTERVAL) or 3
         resp_method = getattr(receiver, self.respond_to)
         resp_method(**kwargs)
-        orm = make_session()
         receiver.stop()
 
 
@@ -242,7 +241,6 @@ class FakeDeletionThread(FakeThread):
         tick_interval = int(settings.FAKE_TASKS_TICK_INTERVAL) or 3
         resp_method = getattr(receiver, self.respond_to)
         resp_method(**kwargs)
-        orm = make_session()
 
         for node_data in nodes_to_restore:
             node = Node(**node_data)
@@ -254,13 +252,13 @@ class FakeDeletionThread(FakeThread):
                 continue
 
             node.status = 'discover'
-            orm.add(node)
-            orm.commit()
+            orm().add(node)
+            orm().commit()
             node.attributes = NodeAttributes(node_id=node.id)
             node.attributes.volumes = node.volume_manager.gen_volumes_info()
             network_manager = NetworkManager(db=orm)
             network_manager.update_interfaces_info(node)
-            orm.commit()
+            orm().commit()
 
             ram = round(node.meta.get('ram') or 0, 1)
             cores = node.meta.get('cores') or 'unknown'

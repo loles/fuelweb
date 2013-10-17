@@ -139,10 +139,10 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
     @content_json
     def GET(self):
         user_data = web.input(cluster_id=None)
-        nodes = self.db().query(Node).options(
-                    joinedload('cluster'),
-                    joinedload('interfaces'),
-                    joinedload('interfaces.assigned_networks'))
+        nodes = self.db.query(Node).options(
+            joinedload('cluster'),
+            joinedload('interfaces'),
+            joinedload('interfaces.assigned_networks'))
         if user_data.cluster_id == '':
             nodes = nodes.filter_by(
                 cluster_id=None).all()
@@ -305,7 +305,7 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                     network_manager.assign_provider_network(node)
                     network_manager.assign_floating_network(node)
                 self.db.commit()
-        nodes = self.db().query(Node).options(
+        nodes = self.db.query(Node).options(
                     joinedload('cluster'),
                     joinedload('interfaces'),
                     joinedload('interfaces.assigned_networks')).\
