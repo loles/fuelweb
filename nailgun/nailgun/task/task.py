@@ -99,7 +99,7 @@ class DeploymentTask(object):
         nodes = TaskHelper.nodes_to_deploy(task.cluster)
 
         logger.info("Associated FQDNs to nodes: %s" %
-                    ', '.join([n.fqdn for n in nodes]))
+                    ', '.join([str(n.fqdn) for n in nodes]))
 
         nodes_ids = [n.id for n in nodes]
         if nodes_ids:
