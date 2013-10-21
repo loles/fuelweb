@@ -109,7 +109,7 @@ class DeploymentTaskManager(TaskManager):
         if nodes_to_provision:
             TaskHelper.update_slave_nodes_fqdn(nodes_to_provision)
             logger.debug("There are nodes to provision: %s",
-                         " ".join([n.fqdn for n in nodes_to_provision]))
+                         " ".join([str(n.fqdn) for n in nodes_to_provision]))
             task_provision = supertask.create_subtask("provision")
             # we assume here that task_provision just adds system to
             # cobbler and reboots it, so it has extremely small weight
@@ -127,7 +127,7 @@ class DeploymentTaskManager(TaskManager):
         if nodes_to_deploy:
             TaskHelper.update_slave_nodes_fqdn(nodes_to_deploy)
             logger.debug("There are nodes to deploy: %s",
-                         " ".join([n.fqdn for n in nodes_to_deploy]))
+                         " ".join([str(n.fqdn) for n in nodes_to_deploy]))
             task_deployment = supertask.create_subtask("deployment")
             deployment_message = self._call_silently(
                 task_deployment,
