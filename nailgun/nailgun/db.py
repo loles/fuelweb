@@ -36,31 +36,26 @@ class NoCacheQuery(Query):
         super(NoCacheQuery, self).__init__(*args, **kwargs)
 
 
-def make_session():
-    return scoped_session(
-        sessionmaker(bind=engine, query_cls=NoCacheQuery))
-
-
-def orm():
-    if not hasattr(web.ctx, "orm"):
-        web.ctx.orm = make_session()
-
-    return web.ctx.orm
+orm = scoped_session(
+    sessionmaker(bind=engine,
+                 autoflush=True,
+                 autocommit=False,
+                 query_cls=NoCacheQuery)
+    )
 
 
 def load_db_driver(handler):
-    web.ctx.orm = make_session()
     try:
         return handler()
     except web.HTTPError:
-        web.ctx.orm.commit()
+        orm().commit()
         raise
     except:
-        web.ctx.orm.rollback()
+        orm().rollback()
         raise
     finally:
-        web.ctx.orm.commit()
-        web.ctx.orm.expire_all()
+        orm().commit()
+        orm().expire_all()
 
 
 def syncdb():
@@ -69,15 +64,13 @@ def syncdb():
 
 
 def dropdb():
-    db = make_session()
-
-    tables = [name for (name,) in db.execute(
+    tables = [name for (name,) in orm().execute(
         "SELECT tablename FROM pg_tables WHERE schemaname = 'public'")]
     for table in tables:
-        db.execute("DROP TABLE IF EXISTS %s CASCADE" % table)
+        orm().execute("DROP TABLE IF EXISTS %s CASCADE" % table)
 
     # sql query to list all types, equivalent to psql's \dT+
-    types = [name for (name,) in db.execute("""
+    types = [name for (name,) in orm().execute("""
         SELECT t.typname as type FROM pg_type t
         LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
         WHERE (t.typrelid = 0 OR (
@@ -91,8 +84,8 @@ def dropdb():
         AND n.nspname = 'public'
         """)]
     for type_ in types:
-        db.execute("DROP TYPE IF EXISTS %s CASCADE" % type_)
-    db.commit()
+        orm().execute("DROP TYPE IF EXISTS %s CASCADE" % type_)
+    orm().commit()
 
 
 def flush():
