@@ -49,10 +49,37 @@ def content_json(func):
     return json_header
 
 
+def is_iterable(x):
+    try:
+        iter(x)
+        return True
+    except TypeError:
+        return False
+
+
+def json_list(data):
+    data = iter(data)
+    yield '['
+    try:
+        item = data.next()
+        yield json.dumps(item)
+    except StopIteration:
+        yield ']'
+        return
+    for item in data:
+        yield ',' + json.dumps(item)
+    yield ']'
+
+
 def build_json_response(data):
     web.header('Content-Type', 'application/json')
     if type(data) in (dict, list):
         return json.dumps(data)
+    elif is_iterable(data):
+        if hasattr(data, 'next'):
+            return json_list(data)
+        else:
+            return json.dumps(data)
     return data
 
 

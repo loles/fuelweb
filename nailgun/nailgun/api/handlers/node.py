@@ -131,10 +131,9 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                     get_node_networks_optimized(
                         node, ips_mapped.get(node.id, []),
                         networks_grouped.get(node.cluster_id, []))
-                json_list.append(json_data)
+                yield json_data
             except Exception:
                 logger.error(traceback.format_exc())
-        return json_list
 
     @content_json
     def GET(self):
