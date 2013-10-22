@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import json
+
 import Queue
 import os.path
 import itertools
@@ -10,6 +10,8 @@ import jinja2
 import StringIO
 
 import sqlalchemy.types
+
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.api import models
 from sqlalchemy import orm

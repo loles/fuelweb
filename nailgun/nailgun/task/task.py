@@ -5,7 +5,6 @@ import itertools
 import traceback
 import subprocess
 import shlex
-import json
 
 import web
 import netaddr
@@ -14,6 +13,7 @@ from sqlalchemy import or_
 
 import nailgun.rpc as rpc
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.settings import settings
 from nailgun.notifier import notifier

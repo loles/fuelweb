@@ -2,8 +2,8 @@
 
 import os
 import web
-import json
 
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.api.handlers.base import JSONHandler, content_json
 

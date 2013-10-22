@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
 import traceback
 import web
 import netaddr
 
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.logger import logger
 from nailgun.errors import errors

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import json
 import traceback
 import web
 
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.api.validators import NetworkConfigurationValidator
 from nailgun.api.models import Cluster

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.errors import errors
 

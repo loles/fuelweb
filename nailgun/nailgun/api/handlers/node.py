@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import traceback
 from datetime import datetime
 
@@ -8,6 +7,7 @@ import web
 
 from sqlalchemy.orm import joinedload
 
+from nailgun.jsonloader import json
 from nailgun.notifier import notifier
 from nailgun.logger import logger
 from nailgun.api.models import Node
