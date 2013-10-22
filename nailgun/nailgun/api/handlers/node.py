@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import traceback
 from datetime import datetime
 
@@ -8,6 +7,7 @@ import web
 
 from sqlalchemy.orm import joinedload
 
+from nailgun.jsonloader import json
 from nailgun.notifier import notifier
 from nailgun.logger import logger
 from nailgun.api.models import Node
@@ -207,8 +207,7 @@ class NodeCollectionHandler(JSONHandler, NICUtils):
                         "and %s GB memory is discovered" %
                         (cores, ram), node_id=node.id)
         raise web.webapi.created(json.dumps(
-            NodeHandler.render(node),
-            indent=4
+            NodeHandler.render(node)
         ))
 
     @content_json

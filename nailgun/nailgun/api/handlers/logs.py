@@ -3,7 +3,6 @@
 import re
 import os
 import time
-import json
 import logging
 import tarfile
 import tempfile
@@ -11,9 +10,10 @@ from itertools import dropwhile
 
 import web
 
-from nailgun.settings import settings
 from nailgun.api.models import Node
 from nailgun.api.handlers.base import JSONHandler, content_json
+from nailgun.jsonloader import json
+from nailgun.settings import settings
 
 logger = logging.getLogger(__name__)
 

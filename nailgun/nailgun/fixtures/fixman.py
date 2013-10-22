@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import json
+
 import Queue
 import os.path
 import itertools
@@ -10,6 +10,8 @@ import jinja2
 import StringIO
 
 import sqlalchemy.types
+
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.api import models
 from sqlalchemy import orm
@@ -182,4 +184,4 @@ def dump_fixture(model_name):
                         list, dict, str, unicode, int, float, bool)):
                     value = ""
                 obj_dump['fields'][field] = value
-    sys.stdout.write(json.dumps(dump, indent=4))
+    sys.stdout.write(json.dumps(dump))

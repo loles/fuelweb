@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import logging
 
 import web
@@ -8,6 +7,7 @@ import web
 from nailgun.api.models import Notification
 from nailgun.api.validators import NotificationValidator
 from nailgun.api.handlers.base import JSONHandler, content_json
+from nailgun.jsonloader import json
 
 
 class NotificationHandler(JSONHandler):

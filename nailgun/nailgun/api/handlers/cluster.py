@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
 import traceback
 import web
 import netaddr
 
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.logger import logger
 from nailgun.errors import errors
@@ -158,8 +158,7 @@ class ClusterCollectionHandler(JSONHandler, NICUtils):
                 self.db.commit()
 
             raise web.webapi.created(json.dumps(
-                ClusterHandler.render(cluster),
-                indent=4
+                ClusterHandler.render(cluster)
             ))
         except errors.OutOfVLANs as e:
             # Cluster was created in this request,

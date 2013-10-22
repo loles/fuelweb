@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
 import web
 from datetime import datetime
 
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.api.models import Notification, Task
 
