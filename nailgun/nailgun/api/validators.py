@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import json
 import types
 
 import web
 
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.settings import settings
 from nailgun.api.models import Release

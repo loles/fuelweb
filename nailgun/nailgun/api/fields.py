@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 import sqlalchemy.types as types
+
+from nailgun.jsonloader import json
 
 
 class JSON(types.TypeDecorator):

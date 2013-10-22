@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.logger import logger
 from nailgun.errors import errors
 
@@ -89,7 +88,7 @@ class Disk(object):
         return json.dumps(self.render())
 
     def __str__(self):
-        return json.dumps(self.render(), indent=4)
+        return json.dumps(self.render())
 
 
 class VolumeManager(object):
