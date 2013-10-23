@@ -25,16 +25,20 @@ class RPCConsumer(ConsumerMixin):
                          callbacks=[self.consume_msg])]
 
     def consume_msg(self, body, msg):
-        callback = getattr(self.receiver, body["method"])
+        logger.info('consume_msg')
         try:
-            callback(**body["args"])
-        except Exception as exc:
-            logger.error(traceback.format_exc())
-            self.receiver.db.rollback()
+            callback = getattr(self.receiver, body["method"])
+            try:
+                callback(**body["args"])
+            except Exception as exc:
+                logger.error(traceback.format_exc())
+                self.receiver.db.rollback()
+            finally:
+                self.receiver.db.commit()
+                self.receiver.db.expire_all()
         finally:
-            self.receiver.db.commit()
-            self.receiver.db.expire_all()
-        msg.ack()
+            logger.info('msg.ack()')
+            msg.ack()
 
 
 class RPCKombuThread(threading.Thread):
