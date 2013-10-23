@@ -26,6 +26,9 @@ class TaskManager(object):
         self.cluster = orm().query(Cluster).get(cluster_id)
 
     def _call_silently(self, task, instance, *args, **kwargs):
+        if kwargs.get('fetch_task', False):
+            task = orm().query(Task).get(task)
+            kwargs.pop('fetch_task')
         method = getattr(instance, kwargs.pop('method_name', 'execute'))
         if task.status == 'error':
             return
@@ -50,7 +53,8 @@ class TaskManager(object):
             u"Spawning new thread for task, args: {0}, kwargs: {1}".format(
                                                 args, kwargs)
         )
-        args = (task, instance) + args
+        args = (task.id, instance) + args
+        kwargs['fetch_task'] = True
         t = threading.Thread(target=self._call_silently,
                              args=args,
                              kwargs=kwargs)
