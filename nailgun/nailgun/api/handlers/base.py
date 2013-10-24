@@ -75,9 +75,16 @@ class JSONHandler(object):
 
     fields = []
 
+    # How much rows fetch from database by default (using method
+    # fetch_collection).
+    YIELD_PER = 100
+
     def __init__(self, *args, **kwargs):
         super(JSONHandler, self).__init__(*args, **kwargs)
-        self.db = orm()
+
+    @property
+    def db(self):
+        return orm()
 
     def get_object_or_404(self, model, *args, **kwargs):
         # should be in ('warning', 'Log message') format
@@ -147,3 +154,17 @@ class JSONHandler(object):
                     else:
                         json_data[field] = value
         return json_data
+
+    def get_yield_per_value(self):
+        try:
+            return int(settings.YIELD_PER)
+        except AttributeError:
+            return JSONHandler.YIELD_PER
+
+    def fetch_collection(self, query, yield_per=None):
+        """Use this method for select rows from huge table."""
+        if yield_per is None:
+            yield_per = self.get_yield_per_value()
+        else:
+            yield_per = int(yield_per)
+        return query.yield_per(yield_per)

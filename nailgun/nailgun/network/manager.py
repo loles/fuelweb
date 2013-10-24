@@ -21,7 +21,11 @@ from nailgun.api.models import Network, NetworkGroup, IPAddrRange
 class NetworkManager(object):
 
     def __init__(self, db=None):
-        self.db = db or orm()
+        pass
+
+    @property
+    def db(self):
+        return orm()
 
     def update_ranges_from_cidr(self, network_group, cidr):
         """
@@ -160,13 +164,13 @@ class NetworkManager(object):
         for n in xrange(nw_group.amount):
             vlan_id = None
             if nw_group.vlan_start is not None:
-                vlan_db = self.db().query(Vlan).get(nw_group.vlan_start + n)
+                vlan_db = self.db.query(Vlan).get(nw_group.vlan_start + n)
                 if vlan_db:
                     logger.warning("Intersection with existing vlan_id: %s",
                                    vlan_db.id)
                 else:
                     vlan_db = Vlan(id=nw_group.vlan_start + n)
-                    self.db().add(vlan_db)
+                    self.db.add(vlan_db)
                 vlan_id = vlan_db.id
             gateway = None
             if nw_group.gateway:
@@ -532,7 +536,7 @@ class NetworkManager(object):
     def _add_networks_wo_ips(self, cluster_db, network_ids, node_db):
         add_net_data = []
         # And now let's add networks w/o IP addresses
-        nets = self.db().query(Network).join(NetworkGroup).\
+        nets = self.db.query(Network).join(NetworkGroup).\
             filter(NetworkGroup.cluster_id == cluster_db.id)
         if network_ids:
             nets = nets.filter(not_(Network.id.in_(network_ids)))
@@ -564,7 +568,7 @@ class NetworkManager(object):
         return dict(groupby(ips_db, lambda ip: ip.node))
 
     def get_networks_grouped_by_cluster(self):
-        networks = self.db().query(Network).options(joinedload('network_group')).\
+        networks = self.db.query(Network).options(joinedload('network_group')).\
             order_by(Network.id).all()
         return dict(groupby(networks,
                     lambda net: net.network_group.cluster_id))

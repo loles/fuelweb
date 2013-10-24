@@ -8,7 +8,7 @@ import threading
 
 import web
 
-from nailgun.db import orm as _orm
+from nailgun.db import orm
 import nailgun.rpc as rpc
 from nailgun.logger import logger
 from nailgun.errors import errors
@@ -18,9 +18,6 @@ from nailgun.api.models import Network
 from nailgun.task.task import TaskHelper
 
 from nailgun.task import task as tasks
-
-
-orm = _orm
 
 
 class TaskManager(object):
@@ -95,7 +92,7 @@ class DeploymentTaskManager(TaskManager):
         supertask = Task(
             name="deploy",
             cluster=self.cluster
-        )
+            )
         orm().add(supertask)
         orm().commit()
         task_deletion, task_provision, task_deployment = None, None, None

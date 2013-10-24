@@ -69,7 +69,7 @@ class NotificationCollectionHandler(JSONHandler):
         # separately unread notifications for notifier and use pagination for
         # list of all notifications
         query = query.limit(1000)
-        notifications = query.all()
+        notifications = self.fetch_collection(query)
         return map(
             NotificationHandler.render,
             notifications
