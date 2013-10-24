@@ -28,6 +28,7 @@ requires = [
     'web.py==0.37',
     'wsgilog==0.3',
     'wsgiref==0.1.2',
+    'ujson==1.33'
     # 'cobbler',
 ]
 

@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 import web
 
 from nailgun.api.models import Release
 from nailgun.api.validators import ReleaseValidator
 from nailgun.api.handlers.base import JSONHandler, content_json
+from nailgun.jsonloader import json
 
 
 class ReleaseHandler(JSONHandler):
@@ -65,6 +64,5 @@ class ReleaseCollectionHandler(JSONHandler):
         self.db.add(release)
         self.db.commit()
         raise web.webapi.created(json.dumps(
-            ReleaseHandler.render(release),
-            indent=4
+            ReleaseHandler.render(release)
         ))

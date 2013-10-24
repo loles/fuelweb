@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import uuid
 from wsgiref.handlers import format_date_time
 from datetime import datetime
@@ -10,6 +9,7 @@ import netaddr
 
 import nailgun.rpc as rpc
 from nailgun.db import orm
+from nailgun.jsonloader import json
 from nailgun.settings import settings
 from nailgun.logger import logger
 from nailgun.api.models import Release
