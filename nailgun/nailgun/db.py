@@ -50,7 +50,8 @@ def load_db_driver(handler):
     except web.HTTPError:
         orm().commit()
         raise
-    except:
+    except Exception as e:
+        logger.error(str(e))
         orm().rollback()
         raise
     finally:
